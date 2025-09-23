@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Perya Basketball Shoot</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to top, #5ba9f7, #fff);
+      font-family: Arial, sans-serif;
+    }
+
+    .game-container {
+      position: relative;
+      width: 500px;
+      height: 600px;
+      background: #cce4f7;
+      border: 5px solid #333;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .ball {
+      position: absolute;
+      bottom: 20px;
+      left: 225px;
+      width: 40px;
+      height: 40px;
+      background: orange;
+      border-radius: 50%;
+      border: 2px solid #333;
+    }
+
+    .hoop {
+      position: absolute;
+      top: 100px;
+      width: 100px;
+      height: 20px;
+      border: 5px solid red;
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    .net {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      width: 70px;
+      height: 80px;
+      background: repeating-linear-gradient(
+        45deg, white, white 2px, transparent 2px, transparent 8px
+      ),
+      repeating-linear-gradient(
+        -45deg, white, white 2px, transparent 2px, transparent 8px
+      );
+      opacity: 0.8;
+      clip-path: polygon(0 0, 100% 0, 80% 100%, 20% 100%);
+      pointer-events: none;
+    }
+
+    .power-bar-container {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      width: 150px;
+      height: 20px;
+      border: 2px solid #333;
+      background: #eee;
+    }
+
+    .power-bar {
+      height: 100%;
+      width: 0%;
+      background: green;
+      transition: width 0.1s;
+    }
+
+    .hud {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .message {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+      color: #222;
+    }
+
+    /* Menu button */
+    #menuBtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 6px 14px;
+      background: #ff9800;
+      border: 2px solid #333;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+    }
+    #menuBtn:hover { background: #e68900; }
+
+    /* Popup menu */
+    #menuPopup {
+      position: absolute;
+      top: 60px;
+      right: 10px;
+      background: rgba(0,0,0,0.9);
+      padding: 15px;
+      border-radius: 8px;
+      display: none;
+      width: 220px;
+      color: white;
+      text-align: left;
+      font-size: 14px;
+    }
+    #menuPopup h3 {
+      margin: 0 0 10px;
+      text-align: center;
+    }
+    .btn {
+      background: #ff9800;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 16px;
+      margin: 5px 0;
+      cursor: pointer;
+      color: white;
+      width: 100%;
+      text-align: center;
+    }
+    .btn:hover { background:#e68900; }
+
+    #helpBox {
+      margin-top: 10px;
+      background: rgba(255,255,255,0.1);
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="hoop" id="hoop">
+      <div class="net"></div>
+    </div>
+    <div class="ball" id="ball"></div>
+    <div class="hud" id="hud">Score: 0 | Lives: 3</div>
+    <div class="message" id="message">🎮 Press Menu → Help for instructions</div>
+
+    <div class="power-bar-container">
+      <div class="power-bar" id="powerBar"></div>
+    </div>
+
+    <!-- Menu button -->
+    <button id="menuBtn" onclick="toggleMenu()">☰ Menu</button>
+
+    <!-- Popup menu -->
+    <div id="menuPopup">
+      <h3>🏀 Menu</h3>
+      <button class="btn" onclick="toggleHelp()">Help</button>
+      <button class="btn" onclick="goHome()">Home</button>
+
+      <div id="helpBox">
+        <p><b>How to Play:</b></p>
+        - Move aim: ← → or A / D<br>
+        - Hold SPACE to charge power<br>
+        - Release SPACE to shoot<br>
+        - Ball must <b>go through the hoop</b> to score<br>
+        - You have 3 lives, good luck!
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ball = document.getElementById("ball");
+    const hoop = document.getElementById("hoop");
+    const hud = document.getElementById("hud");
+    const message = document.getElementById("message");
+    const powerBar = document.getElementById("powerBar");
+
+    let score = 0, lives = 3;
+    let isCharging = false, power = 0, maxPower = 25, powerInterval;
+    let isShot = false, aimX = 225;
+
+    // Hoop movement
+    let hoopX = 200, hoopSpeed = 2;
+    function moveHoop() {
+      hoopX += hoopSpeed;
+      if (hoopX <= 50 || hoopX >= 350) hoopSpeed *= -1;
+      hoop.style.left = hoopX + "px";
+      requestAnimationFrame(moveHoop);
+    }
+    moveHoop();
+
+    // Move aim
+    document.addEventListener("keydown", (e) => {
+      if (isShot) return;
+      if (e.key === "ArrowLeft" || e.key === "a") {
+        aimX -= 10;
+        if (aimX < 0) aimX = 0;
+        ball.style.left = aimX + "px";
+      } else if (e.key === "ArrowRight" || e.key === "d") {
+        aimX += 10;
+        if (aimX > 460) aimX = 460;
+        ball.style.left = aimX + "px";
+      }
+    });
+
+    // Charge power
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && !isCharging && !isShot) {
+        isCharging = true;
+        power = 0;
+        powerInterval = setInterval(() => {
+          if (power < maxPower) {
+            power++;
+            powerBar.style.width = (power / maxPower) * 90 + "%";
+          }
+        }, 50);
+      }
+    });
+
+    // Release shot
+    document.addEventListener("keyup", (e) => {
+      if (e.code === "Space" && isCharging) {
+        clearInterval(powerInterval);
+        isCharging = false;
+        shootBall(power);
+        power = 0;
+        powerBar.style.width = "0%";
+      }
+    });
+
+    function shootBall(force) {
+      isShot = true;
+      message.textContent = "";
+
+      let posX = aimX, posY = 20, upSpeed = force, gravity = 0.6;
+      let rightSpeed = (Math.random() * 4) - 2;
+      let passedThroughHoop = false;
+
+      function animate() {
+        posY += upSpeed;
+        posX += rightSpeed;
+        upSpeed -= gravity;
+
+        ball.style.bottom = posY + "px";
+        ball.style.left = posX + "px";
+
+        let ballRect = ball.getBoundingClientRect();
+        let hoopRect = hoop.getBoundingClientRect();
+
+        if (
+          !passedThroughHoop &&
+          ballRect.top < hoopRect.bottom &&
+          ballRect.bottom > hoopRect.top &&
+          ballRect.left + 20 > hoopRect.left &&
+          ballRect.right - 20 < hoopRect.right
+        ) {
+          passedThroughHoop = true;
+        }
+
+        if (passedThroughHoop && ballRect.top > hoopRect.bottom) {
+          score++;
+          hud.textContent = `Score: ${score} | Lives: ${lives}`;
+          message.textContent = "🏆 Nice Shot!";
+          resetBall();
+          return;
+        }
+
+        if (posY <= 0) {
+          if (!passedThroughHoop) {
+            lives--;
+            hud.textContent = `Score: ${score} | Lives: ${lives}`;
+            message.textContent = lives > 0 ? "❌ Missed! Try Again" : "🎮 Game Over!";
+          }
+          resetBall();
+          return;
+        }
+
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    function resetBall() {
+      setTimeout(() => {
+        if (lives > 0) {
+          isShot = false;
+          aimX = 225;
+          ball.style.left = aimX + "px";
+          ball.style.bottom = "20px";
+        }
+      }, 1000);
+    }
+
+    // Menu toggle
+    function toggleMenu() {
+      const popup = document.getElementById("menuPopup");
+      popup.style.display = popup.style.display === "block" ? "none" : "block";
+    }
+    function toggleHelp() {
+      const helpBox = document.getElementById("helpBox");
+      helpBox.style.display = helpBox.style.display === "block" ? "none" : "block";
+    }
+    function goHome() {
+      window.location.href = "HomePage.html";
+    }
+  </script>
+</body>
+</html>

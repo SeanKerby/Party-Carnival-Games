@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pig Game Survey</title>
+  <style>
+  /* 🎪 Carnival Theme for Survey Page */
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Comic Sans MS', 'Baloo 2', cursive, sans-serif;
+    background: linear-gradient(135deg, #ffefba, #ffffff);
+    background-image: radial-gradient(circle at top left, #ff4d4d, transparent 70%),
+                      radial-gradient(circle at top right, #ffcc00, transparent 70%),
+                      radial-gradient(circle at bottom left, #33cc33, transparent 70%),
+                      radial-gradient(circle at bottom right, #3399ff, transparent 70%);
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .card {
+    background: #fff8e7;
+    border: 5px solid #ff4d4d;
+    border-radius: 20px;
+    box-shadow: 0px 8px 20px rgba(0,0,0,0.3);
+    padding: 30px;
+    width: 500px;
+    text-align: center;
+    animation: float 3s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* 🎪 Header styled like carnival tent */
+  .card h2 {
+    margin: -30px -30px 20px -30px;
+    padding: 20px;
+    background: repeating-linear-gradient(
+      45deg,
+      #ff4d4d,
+      #ff4d4d 40px,
+      #ffffff 40px,
+      #ffffff 80px
+    );
+    border-bottom: 5px solid #ffcc00;
+    color: #fff;
+    text-shadow: 2px 2px 0 #000;
+    font-size: 24px;
+    position: relative;
+  }
+
+  .card h2::after {
+    content: "";
+    position: absolute;
+    bottom: -18px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: repeating-linear-gradient(
+      -45deg,
+      #ff4d4d,
+      #ff4d4d 20px,
+      #ffffff 20px,
+      #ffffff 40px
+    );
+    clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+  }
+
+  /* Form layout */
+  form {
+    text-align: left;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  input[type="text"], select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ffcc00;
+    border-radius: 10px;
+    background: #fffdf5;
+    font-size: 14px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+  }
+
+  textarea {
+    resize: none;
+  }
+
+  /* Radio buttons */
+  .radio-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .radio-group label {
+    font-weight: normal;
+    color: #444;
+  }
+
+  /* Buttons */
+  button {
+    background: linear-gradient(135deg, #ff4d4d, #ffcc00);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+    font-size: 16px;
+    margin: 8px 5px;
+  }
+
+  button:hover {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #ffcc00, #ff4d4d);
+  }
+
+  #surveyMessage {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #ff4d4d;
+    font-size: 16px;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h2>📝 Pinoy Carnival Game Survey</h2>
+
+    <form id="surveyForm">
+      <!-- Name -->
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" name="name" placeholder="Enter your name" required><br><br>
+
+      <!-- Year -->
+      <label for="year">Year Level:</label>
+      <select id="year" name="year" required>
+        <option value="">Select Year...</option>
+        <option value="1st Year">1st Year</option>
+        <option value="2nd Year">2nd Year</option>
+        <option value="3rd Year">3rd Year</option>
+        <option value="4th Year">4th Year</option>
+      </select><br><br>
+
+      <!-- Course -->
+      <label for="course">Course:</label>
+      <select id="course" name="course" required>
+        <option value="">Select Course...</option>
+        <option value="BSHM">BSHM</option>
+        <option value="BSTM">BSTM</option>
+        <option value="BSIT">BSIT</option>
+        <option value="BSEED">BSEED</option>
+        <option value="BEED">BEED</option>
+        <option value="BSCRIM">BSCRIM</option>
+      </select><br><br>
+
+      <!-- Fun level -->
+      <label>How fun was the Carnival Game?<br>
+        <select name="fun" required>
+          <option value="">Select...</option>
+          <option value="Very Fun">Very Fun</option>
+          <option value="Fun">Fun</option>
+          <option value="Okay">Okay</option>
+          <option value="Boring">Boring</option>
+        </select>
+      </label><br><br>
+
+      <!-- Play again -->
+      <label>Would you play it again?</label>
+      <div class="radio-group">
+        <label><input type="radio" name="playAgain" value="Yes" required> Yes</label>
+        <label><input type="radio" name="playAgain" value="No"> No</label>
+      </div>
+
+      <!-- Suggestions -->
+      <label>Any suggestions?<br>
+        <textarea name="suggestions" rows="3"></textarea>
+      </label><br><br>
+
+      <!-- Buttons -->
+      <button type="submit">Submit Survey</button>
+    </form>
+
+    <p id="surveyMessage"></p>
+  </div>
+
+  <script>
+    document.getElementById("surveyForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      let formData = new FormData(this);
+
+      fetch("https://script.google.com/macros/s/AKfycbw4OA5TqfTlxRMbMyH7mXkJaUw9RSZ6lSN-6XZqekrcXV_4B5KD0BtBVPWQTiof9jeTPw/exec", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.text())
+      .then(msg => {
+        document.getElementById("surveyMessage").textContent = "✅ Survey submitted!";
+        this.reset();
+      })
+      .catch(err => {
+        document.getElementById("surveyMessage").textContent = "❌ Error submitting survey.";
+      });
+    });
+  </script>
+</body>
+</html>

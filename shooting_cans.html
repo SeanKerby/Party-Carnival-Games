@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tira Lata sa Perya 🎯</title>
+  <link rel="stylesheet" href="style_cans.css">
+  <style>
+    body { 
+      margin:0; 
+      background:#222; 
+      color:white; 
+      font-family:Arial,sans-serif; 
+      text-align:center;
+    }
+    #gameCanvas { 
+      display:block; 
+      margin:20px auto; 
+      background:#444; 
+      border-radius:8px; 
+    }
+    #restartBtn {
+      display:none;
+      position:absolute;
+      top:20px;
+      right:20px;
+      padding:10px 20px;
+      font-size:18px;
+      background:#4CAF50;
+      color:white;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+    }
+    /* Menu button */
+    #menuBtn {
+      position:absolute;
+      top:20px;
+      left:20px;
+      padding:10px 20px;
+      font-size:18px;
+      background:#ff9800;
+      color:white;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+    }
+    #menuBtn:hover { background:#e68900; }
+
+    /* Popup menu */
+    #menuPopup {
+      position:absolute;
+      top:70px;
+      left:20px;
+      background:rgba(0,0,0,0.9);
+      padding:15px;
+      border-radius:8px;
+      display:none;
+      width:200px;
+      text-align:left;
+    }
+    #menuPopup h3 { margin:0 0 10px; text-align:center; }
+    .btn {
+      background:#ff9800;
+      border:none;
+      padding:8px 12px;
+      border-radius:6px;
+      font-size:16px;
+      margin:5px 0;
+      cursor:pointer;
+      color:white;
+      width:100%;
+      text-align:center;
+    }
+    .btn:hover { background:#e68900; }
+    #helpBox {
+      margin-top:10px;
+      background:rgba(255,255,255,0.1);
+      padding:8px;
+      border-radius:6px;
+      font-size:14px;
+      display:none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tira Lata sa Perya 🎪</h1>
+  <p>Shoot all the cans to win Exciting Prize</p>
+
+  <!-- Game -->
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
+  <div id="prizeBox" class="hidden"></div>
+  <button id="restartBtn">🔄 Restart</button>
+
+  <!-- Menu button -->
+  <button id="menuBtn" onclick="toggleMenu()">☰ Menu</button>
+
+  <!-- Popup menu -->
+  <div id="menuPopup">
+    <h3>🎯 Menu</h3>
+    <button class="btn" onclick="toggleHelp()">Help</button>
+    <button class="btn" onclick="goHome()">Home</button>
+
+    <div id="helpBox">
+      <p><b>Controls:</b></p>
+      <ul>
+        <li>🖱️ Click = Shoot</li>
+        <li>Mouse Move = Aim</li>
+        <li>🔄 Restart button = Retry</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="cans.js"></script>
+  <script>
+    function toggleMenu() {
+      const popup = document.getElementById("menuPopup");
+      popup.style.display = popup.style.display === "block" ? "none" : "block";
+    }
+
+    function toggleHelp() {
+      const helpBox = document.getElementById("helpBox");
+      helpBox.style.display = helpBox.style.display === "block" ? "none" : "block";
+    }
+
+    function goHome() {
+      window.location.href = "HomePage.html"; 
+    }
+  </script>
+</body>
+</html>
