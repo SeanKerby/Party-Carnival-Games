@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Filipino Carnival Games</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #ffe5e5, #fff9c4, #e8f5e9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px 20px;
+      color: #d32f2f;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      color: #444;
+      max-width: 600px;
+      margin: 10px auto 0;
+    }
+
+    .games-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      padding: 30px;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .game-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .game-card:hover {
+      transform: scale(1.05);
+    }
+
+    .game-icon {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+
+    .game-card h2 {
+      margin: 10px 0;
+      color: #b71c1c;
+    }
+
+    .game-card p {
+      font-size: 0.95rem;
+      color: #555;
+      min-height: 50px;
+    }
+
+    .play-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #d32f2f;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .play-btn:hover {
+      background: #b71c1c;
+    }
+
+    /* Survey button style */
+    .survey-btn {
+      display: inline-block;
+      margin: 30px auto;
+      padding: 12px 30px;
+      background: linear-gradient(45deg, #fbc02d, #d32f2f, #0288d1);
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .survey-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      margin-top: auto;
+      font-size: 0.9rem;
+      color: #fff;
+      background: linear-gradient(45deg, #d32f2f, #fbc02d, #0288d1);
+      background-size: 300% 300%;
+      animation: carnivalFlow 6s ease infinite;
+      width: 100%;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    }
+
+    @keyframes carnivalFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🎪 Filipino Carnival Games 🎉</h1>
+    <p>Experience the joy of traditional Filipino fiesta games! Choose a challenge and have fun.</p>
+  </header>
+
+  <main class="games-container">
+    <div class="game-card">
+      <div class="game-icon">⭐</div>
+      <h2>Shooting Cans</h2>
+      <p>Knock down all the cans and show off your aim!</p>
+      <button class="play-btn" onclick="playGame('Shooting Cans')">Play Now</button>
+    </div>
+
+    <div class="game-card">
+      <div class="game-icon">🐷</div>
+      <h2>Habuling Baboy</h2>
+      <p>Catch the pig before it slips away—just like at a real fiesta!</p>
+      <button class="play-btn" onclick="playGame('Habuling Baboy')">Play Now</button>
+    </div>
+
+    <div class="game-card">
+      <div class="game-icon">🏀</div>
+      <h2>Hoops</h2>
+      <p>Shoot the ball into the hoop and rack up the highest score!</p>
+      <button class="play-btn" onclick="playGame('Hoops')">Play Now</button>
+    </div>
+  </main>
+
+  <!-- Survey Button -->
+  <button class="survey-btn" onclick="goToSurvey()">📋 Take Our Survey</button>
+
+  <footer>
+    &copy; 2025 CCEBB Developers. All Rights Reserved.
+  </footer>
+
+  <script>
+    function playGame(gameName) {
+      alert("You selected: " + gameName + " 🎉");
+      let fileName = gameName.toLowerCase().replace(/ /g, "_") + ".html";
+      window.location.href = fileName;  
+    }
+
+    function goToSurvey() {
+      window.location.href = "survey.html";
+    }
+  </script>
+
+</body>
+</html>
