@@ -242,7 +242,94 @@
         mud.position.y = 0.01;
         scene.add(mud);
 
-        makeTrees(50);
+        // 🪵 Fence around mud area
+      createFence(30, 40);
+
+      // 🏠 Houses
+      createHousesOutside(40);
+
+      // 🐷 Pigs
+      for (let i = 0; i < TOTAL_PIGS; i++) {
+        const pig = makePig();
+        const a = Math.random() * Math.PI * 2;
+       const r = Math.random() * 18;
+       pig.position.set(Math.cos(a) * r, 0, Math.sin(a) * r);
+        pigs.push(pig);
+       scene.add(pig);
+       }
+
+       // 🏠 Houses with roof + window + door
+function createHousesOutside(distance) {
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0xffe4b5 });
+  const roofMat = new THREE.MeshStandardMaterial({ color: 0x8b0000 });
+  const doorMat = new THREE.MeshStandardMaterial({ color: 0x5a3e1b });
+  const windowMat = new THREE.MeshStandardMaterial({ color: 0x87cefa });
+
+  const positions = [
+    [distance, 0, distance],
+    [-distance, 0, distance],
+    [distance, 0, -distance],
+    [-distance, 0, -distance]
+  ];
+
+  positions.forEach(([x, y, z]) => {
+    const house = new THREE.Mesh(new THREE.BoxGeometry(6, 4, 6), wallMat);
+    house.position.set(x, 2, z);
+    house.castShadow = true;
+    house.receiveShadow = true;
+    scene.add(house);
+
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(5, 3, 4), roofMat);
+    roof.position.set(x, 6, z);
+    roof.rotation.y = Math.PI / 4;
+    roof.castShadow = true;
+    scene.add(roof);
+
+    // Door
+    const door = new THREE.Mesh(new THREE.BoxGeometry(1.5, 2.5, 0.2), doorMat);
+    door.position.set(x, 1.2, z + 3.1);
+    scene.add(door);
+
+    // Windows
+    const winLeft = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 0.1), windowMat);
+    winLeft.position.set(x - 2, 2.5, z + 3.05);
+    const winRight = winLeft.clone();
+    winRight.position.x = x + 2;
+    scene.add(winLeft);
+    scene.add(winRight);
+  });
+}
+
+// 🪵 Connected Circular Wooden Fence
+function createFence(radius, segments) {
+  const fenceMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.9, metalness: 0.1 });
+  const postGeom = new THREE.CylinderGeometry(0.2, 0.25, 2.5, 12);
+  const railGeom = new THREE.BoxGeometry((2 * Math.PI * radius) / segments, 0.15, 0.25); // Auto size
+
+  for (let i = 0; i < segments; i++) {
+    const angle = (i / segments) * Math.PI * 2;
+    const nextAngle = ((i + 1) / segments) * Math.PI * 2;
+
+    // Fence post
+    const post = new THREE.Mesh(postGeom, fenceMat);
+    post.position.set(Math.cos(angle) * radius, 1.25, Math.sin(angle) * radius);
+    post.castShadow = true;
+    scene.add(post);
+
+    // Top rail (auto-rotated between posts)
+    const midAngle = (angle + nextAngle) / 2;
+    const rail = new THREE.Mesh(railGeom, fenceMat);
+    rail.position.set(Math.cos(midAngle) * radius, 1.4, Math.sin(midAngle) * radius);
+    rail.rotation.y = -midAngle;
+    rail.castShadow = true;
+    scene.add(rail);
+
+    // Bottom rail
+    const lower = rail.clone();
+    lower.position.y = 0.8;
+    scene.add(lower);
+  }
+}
 
         // spawn pigs
         for (let i = 0; i < TOTAL_PIGS; i++) {
@@ -265,6 +352,42 @@
         setInterval(updateTimer, 1000);
         window.addEventListener('resize', onWindowResize, false);
       }
+
+      createFence(30, 32);
+      createHousesOutside(45);
+
+      
+      
+function createFence(radius, segments) {
+  const fenceMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.9, metalness: 0.1 });
+  const postGeom = new THREE.CylinderGeometry(0.2, 0.25, 2.5, 12);
+  const railGeom = new THREE.BoxGeometry((2 * Math.PI * radius) / segments, 0.15, 0.25); // Auto size
+
+  for (let i = 0; i < segments; i++) {
+    const angle = (i / segments) * Math.PI * 2;
+    const nextAngle = ((i + 1) / segments) * Math.PI * 2;
+
+    // Fence post
+    const post = new THREE.Mesh(postGeom, fenceMat);
+    post.position.set(Math.cos(angle) * radius, 1.25, Math.sin(angle) * radius);
+    post.castShadow = true;
+    scene.add(post);
+
+    // Top rail (auto-rotated between posts)
+    const midAngle = (angle + nextAngle) / 2;
+    const rail = new THREE.Mesh(railGeom, fenceMat);
+    rail.position.set(Math.cos(midAngle) * radius, 1.4, Math.sin(midAngle) * radius);
+    rail.rotation.y = -midAngle;
+    rail.castShadow = true;
+    scene.add(rail);
+
+    // Bottom rail
+    const lower = rail.clone();
+    lower.position.y = 0.8;
+    scene.add(lower);
+  }
+}
+
 
       function updateTimer() {
         if (gameEnded || !gameStarted || paused) return;
@@ -369,24 +492,7 @@
         return pig;
       }
 
-      function makeTrees(count) {
-        const trunkGeo = new THREE.CylinderGeometry(0.3, 0.3, 3);
-        const trunkMat = new THREE.MeshPhongMaterial({ color: 0x8b4513 });
-        const leavesGeo = new THREE.SphereGeometry(2, 8, 8);
-        const leavesMat = new THREE.MeshPhongMaterial({ color: 0x006400 });
-
-        for (let i = 0; i < count; i++) {
-          let trunk = new THREE.Mesh(trunkGeo, trunkMat);
-          let leaves = new THREE.Mesh(leavesGeo, leavesMat);
-          let x = (Math.random() - 0.5) * 180;
-          let z = (Math.random() - 0.5) * 180;
-          trunk.position.set(x, 1.5, z);
-          leaves.position.set(x, 4, z);
-          scene.add(trunk);
-          scene.add(leaves);
-          obstacles.push({ x: x, z: z, radius: 2 });
-        }
-      }
+     
 
       function collidesWithObstacle(pos, radius = 1) {
         for (let obs of obstacles) {
@@ -425,29 +531,52 @@
         if (renderer) renderer.render(scene, camera);
       }
 
-      function handleMovement() {
-        const forward = new THREE.Vector3();
-        camera.getWorldDirection(forward);
+       function handleMovement() {
+      const forward = new THREE.Vector3();
+      camera.getWorldDirection(forward);
 
-        let newPos = camera.position.clone();
-        if (keys['w']) newPos.addScaledVector(forward, playerSpeed);
-        if (keys['s']) newPos.addScaledVector(forward, -playerSpeed);
-        if (keys['a']) {
-          newPos.x -= Math.sin(camera.rotation.y) * playerSpeed;
-          newPos.z += Math.cos(camera.rotation.y) * playerSpeed;
-        }
-        if (keys['d']) {
-          newPos.x += Math.sin(camera.rotation.y) * playerSpeed;
-          newPos.z -= Math.cos(camera.rotation.y) * playerSpeed;
-        }
+      let newPos = camera.position.clone();
+      if (keys['w']) newPos.addScaledVector(forward, playerSpeed);
+      if (keys['s']) newPos.addScaledVector(forward, -playerSpeed);
+      if (keys['a']) {
+        newPos.x -= Math.sin(camera.rotation.y) * playerSpeed;
+        newPos.z += Math.cos(camera.rotation.y) * playerSpeed;
+      }
+      if (keys['d']) {
+        newPos.x += Math.sin(camera.rotation.y) * playerSpeed;
+        newPos.z -= Math.cos(camera.rotation.y) * playerSpeed;
+      }
 
-        if (!collidesWithObstacle(newPos, 1)) {
-          camera.position.copy(newPos);
-        }
+      // 🚫 Prevent leaving fenced area
+      const fenceRadius = 29; // slightly inside actual fence (30)
+      const distFromCenter = Math.hypot(newPos.x, newPos.z);
+      if (distFromCenter > fenceRadius) {
+        const angle = Math.atan2(newPos.z, newPos.x);
+        newPos.x = Math.cos(angle) * fenceRadius;
+        newPos.z = Math.sin(angle) * fenceRadius;
+      }
+
+      camera.position.copy(newPos);
+
+      if (keys['arrowleft']) camera.rotation.y += 0.03;
+      if (keys['arrowright']) camera.rotation.y -= 0.03;
+    }
+
+      // 🚫 Prevent leaving fenced area
+      const fenceRadius = 29; // slightly inside actual fence (30)
+      const distFromCenter = Math.hypot(newPos.x, newPos.z);
+      if (distFromCenter > fenceRadius) {
+        const angle = Math.atan2(newPos.z, newPos.x);
+        newPos.x = Math.cos(angle) * fenceRadius;
+        newPos.z = Math.sin(angle) * fenceRadius;
+      }
+
+      camera.position.copy(newPos);
 
         if (keys['arrowleft']) camera.rotation.y += 0.03;
         if (keys['arrowright']) camera.rotation.y -= 0.03;
-      }
+
+      
 
       function movePigs() {
         pigs.forEach(pig => {
