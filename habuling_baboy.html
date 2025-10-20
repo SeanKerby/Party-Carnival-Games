@@ -1,560 +1,336 @@
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8" /> 
-    <title>Catch the Pig - Fiesta Edition</title>
-    <style>
-      body { 
-        margin: 0; 
-        overflow: hidden; 
-        background: black; 
-        font-family: 'Trebuchet MS', sans-serif;
-      }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Catch the Pig - Farm Edition</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: black; font-family: 'Trebuchet MS', sans-serif; }
+    #hud {
+      position: absolute; top: 10px; left: 10px; color: #fff8dc; font-size: 18px;
+      background: rgba(0,0,0,0.6); padding: 12px 18px; border: 3px solid #ffcc00;
+      border-radius: 10px; box-shadow: 0 0 12px #ffeb3b; display: none;
+    }
+    #message {
+      position: absolute; top:50%; left:50%; transform: translate(-50%,-50%);
+      color: #ffeb3b; font-size: 36px; background: rgba(0,0,0,0.85);
+      padding: 25px; border-radius: 12px; border: 3px solid #ff5722; display: none;
+      text-align:center; box-shadow: 0 0 20px #ff9800;
+    }
+    #menu {
+      position:absolute; top:50%; left:50%; transform: translate(-50%,-50%);
+      background: rgba(0,0,0,0.85); color:white; padding:30px; border-radius:14px;
+      text-align:center; width:360px; border:4px solid #ffcc00; box-shadow:0 0 25px #ff9800;
+    }
+    .flag{ width:0; height:0; border-left:20px solid transparent; border-right:20px solid transparent; border-bottom:30px solid; animation: wave 1s infinite ease-in-out; }
+    .flag:nth-child(1){border-bottom-color:#ff0000} .flag:nth-child(2){border-bottom-color:#00ff00} .flag:nth-child(3){border-bottom-color:#0000ff} .flag:nth-child(4){border-bottom-color:#ffff00} .flag:nth-child(5){border-bottom-color:#ff00ff}
+    @keyframes wave{0%,100%{transform:rotate(5deg)}50%{transform:rotate(-5deg)}}
+    .btn{ background:linear-gradient(45deg,#ff9800,#ff5722); border:none; padding:12px 20px; border-radius:6px; font-size:18px; margin:10px 0; cursor:pointer; color:white; width:100%; box-shadow:0 4px 10px rgba(0,0,0,0.5);}
+    .btn:hover{ filter:brightness(.95) }
+    #help{ display:none; margin-top:12px; background: rgba(255,255,255,0.06); padding:12px; border-radius:8px; text-align:left; font-size:14px }
+  </style>
+</head>
+<body>
+  <div id="hud">⏳ Time: <span id="timer">60</span>s | 🐷 Caught: <span id="caught">0</span>/<span id="total">3</span> | Left: <span id="pigsLeft">3</span></div>
 
-      /* HUD */
-      #hud {
-        position: absolute;
-        top: 10px; left: 10px;
-        color: #fff8dc;
-        font-size: 18px;
-        background: rgba(0,0,0,0.6);
-        padding: 12px 18px;
-        border: 3px solid #ffcc00;
-        border-radius: 10px;
-        box-shadow: 0 0 12px #ffeb3b;
-        display: none;
-      }
-
-      /* End Message */
-      #message {
-        position: absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        color: #ffeb3b;
-        font-size: 36px;
-        background: rgba(0,0,0,0.85);
-        padding: 25px;
-        border-radius: 12px;
-        border: 3px solid #ff5722;
-        display: none;
-        text-align: center;
-        box-shadow: 0 0 20px #ff9800;
-      }
-
-      /* Menu */
-      #menu {
-        position: absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(0,0,0,0.85);
-        color: white;
-        padding: 30px;
-        border-radius: 14px;
-        text-align: center;
-        width: 340px;
-        border: 4px solid #ffcc00;
-        box-shadow: 0 0 25px #ff9800;
-      }
-
-      #menu h1 {
-        margin-bottom: 20px;
-        font-size: 32px;
-        color: #ffeb3b;
-        text-shadow: 2px 2px 8px #ff5722;
-      }
-
-      /* Fiesta banner */
-      #banner {
-        width: 100%;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-around;
-      }
-      .flag {
-        width: 0; height: 0;
-        border-left: 20px solid transparent;
-        border-right: 20px solid transparent;
-        border-bottom: 30px solid;
-        animation: wave 1s infinite ease-in-out;
-      }
-      .flag:nth-child(1) { border-bottom-color: #ff0000; animation-delay: 0s; }
-      .flag:nth-child(2) { border-bottom-color: #00ff00; animation-delay: 0.2s; }
-      .flag:nth-child(3) { border-bottom-color: #0000ff; animation-delay: 0.4s; }
-      .flag:nth-child(4) { border-bottom-color: #ffff00; animation-delay: 0.6s; }
-      .flag:nth-child(5) { border-bottom-color: #ff00ff; animation-delay: 0.8s; }
-      @keyframes wave {
-        0%, 100% { transform: rotate(5deg); }
-        50% { transform: rotate(-5deg); }
-      }
-
-      /* Buttons */
-      .btn {
-        background: linear-gradient(45deg, #ff9800, #ff5722);
-        border: none;
-        padding: 12px 20px;
-        border-radius: 6px;
-        font-size: 18px;
-        margin: 10px 0;
-        cursor: pointer;
-        color: white;
-        width: 100%;
-        transition: 0.3s;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      }
-      .btn:hover { background: linear-gradient(45deg, #e68900, #d84315); }
-
-      /* Help Box */
-      #help {
-        margin-top: 15px;
-        background: rgba(255,255,255,0.1);
-        padding: 12px;
-        border-radius: 8px;
-        text-align: left;
-        font-size: 14px;
-        display: none;
-      }
-
-      /* Pause Button */
-      #pauseBtn {
-        position: absolute;
-        top: 10px; right: 10px;
-        background: #f44336;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 16px;
-        font-size: 16px;
-        display: none;
-        cursor: pointer;
-        box-shadow: 0 0 10px #f44336;
-      }
-      #pauseBtn:hover { background: #d32f2f; }
-    </style>
-  </head>
-  <body>
-    <!-- HUD -->
-    <div id="hud">
-      ⏳ Time: <span id="timer">60</span>s |
-      🐷 Caught: <span id="caught">0</span>/<span id="total">3</span> |
-      Left: <span id="pigsLeft">3</span>
+  <div id="menu">
+    <div style="display:flex; justify-content:space-around; margin-bottom:12px;">
+      <div class="flag"></div><div class="flag"></div><div class="flag"></div><div class="flag"></div><div class="flag"></div>
     </div>
-
-    <!-- Pause Button -->
-    <button id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
-
-    <!-- Menu -->
-    <div id="menu">
-      <div id="banner">
-        <div class="flag"></div>
-        <div class="flag"></div>
-        <div class="flag"></div>
-        <div class="flag"></div>
-        <div class="flag"></div>
-      </div>
-      <h1> Catch the Pigs</h1>
-      <button class="btn" onclick="startGame()">▶ Start Game</button>
-      <button class="btn" onclick="toggleHelp()">❓ Help</button>
-      <button class="btn" onclick="goHome()">🏠 Home</button>
-      <div id="help">
-        <p><b>Controls:</b></p>
-        <ul>
-          <li>W - Move Forward</li>
-          <li>S - Move Backward</li>
-          <li>A - Move Left</li>
-          <li>D - Move Right</li>
-          <li>← → - Rotate Camera</li>
-        </ul>
-      </div>
+    <h1 style="margin:0 0 14px; font-size:32px; color:#ffeb3b; text-shadow:2px 2px 8px #ff5722">Catch the Pigs</h1>
+    <button class="btn" onclick="startGame()">▶ Start Game</button>
+    <button class="btn" onclick="toggleHelp()">❓ Help</button>
+    <button class="btn" onclick="goHome()">🏠 Home</button>
+    <div id="help">
+      <p><b>Controls</b></p>
+      <ul>
+        <li>W - Move Forward</li>
+        <li>S - Move Backward</li>
+        <li>A - Move Left</li>
+        <li>D - Move Right</li>
+        <li>← → - Rotate Camera</li>
+      </ul>
     </div>
+  </div>
 
-    <!-- End Message -->
-    <div id="message"></div>
+  <div id="message"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-    <script>
-      const TOTAL_PIGS = 3;
-      const GAME_TIME_SEC = 60;
-      let scene, camera, renderer;
-      let pigs = [];
-      let caughtCount = 0;
-      let startTime, gameEnded = false, gameStarted = false;
-      let keys = {};
-      let playerSpeed = 0.22;
-      let obstacles = [];
-      let paused = false;
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <script>
+    // CONFIG
+    const TOTAL_PIGS = 3;
+    const GAME_TIME_SEC = 50;
+    const MUD_RADIUS = 30;
+    // fence rectangle around mud (farm enclosure)
+    // we'll make a margin beyond mud: fence half size
+    const FENCE_HALF = 36; // fence extends to +/- 36 on both axes (rectangular)
+    const FENCE_POST_SPACING = 4;
+    const FENCE_HEIGHT = 2.0; // taller farm look
 
-      function startGame() {
-        document.getElementById("menu").style.display = "none";
-        document.getElementById("hud").style.display = "block";
-        document.getElementById("pauseBtn").style.display = "block";
-        init();
-        animate();
-      }
+    // STATE
+    let scene, camera, renderer;
+    let pigs = [], caughtCount = 0;
+    let startTime = 0, gameEnded = false, gameStarted = false;
+    let keys = {}, playerSpeed = 0.20;
 
-      function togglePause() {
-        paused = !paused;
-        const btn = document.getElementById("pauseBtn");
-        btn.textContent = paused ? "▶ Resume" : "⏸ Pause";
-      }
+    // UI helpers
+    function toggleHelp(){ document.getElementById('help').style.display = document.getElementById('help').style.display === 'block' ? 'none' : 'block'; }
+    function goHome(){ alert('Returning to Home Page...'); window.location.href = 'HomePage.html'; }
+    function restartGame(){ window.location.reload(); }
 
-      function toggleHelp() {
-        const helpBox = document.getElementById("help");
-        helpBox.style.display = helpBox.style.display === "block" ? "none" : "block";
-      }
+    function startGame(){
+      document.getElementById('menu').style.display = 'none';
+      document.getElementById('hud').style.display = 'block';
+      init();
+      animate();
+    }
 
-      function goHome() {
-        alert("Returning to Home Page...");
-        window.location.href = "HomePage.html"; 
-      }
+    // Initialize scene
+    function init(){
+      gameStarted = true;
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x87ceeb);
 
-      function restartGame() {
-        window.location.reload();
-      }
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 2.2, 10);
 
-      function init() {
-        gameStarted = true;
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x87ceeb);
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
 
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 2, 10);
+      // lights
+      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      const dir = new THREE.DirectionalLight(0xffffff, 0.9);
+      dir.position.set(20, 40, 10);
+      scene.add(dir);
 
-        renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+      // ground
+      const ground = new THREE.Mesh(
+        new THREE.PlaneGeometry(200, 200),
+        new THREE.MeshPhongMaterial({ color: 0x228b22 })
+      );
+      ground.rotation.x = -Math.PI/2;
+      scene.add(ground);
 
-        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-        const dir = new THREE.DirectionalLight(0xffffff, 1);
-        dir.position.set(20, 30, 10);
-        scene.add(dir);
+      // mud (play area)
+      const mud = new THREE.Mesh(
+        new THREE.CircleGeometry(MUD_RADIUS, 64),
+        new THREE.MeshPhongMaterial({ color: 0x5c4033, side: THREE.DoubleSide })
+      );
+      mud.rotation.x = -Math.PI/2;
+      mud.position.y = 0.01;
+      scene.add(mud);
 
-        // ground
-        const groundGeo = new THREE.PlaneGeometry(200, 200);
-        const groundMat = new THREE.MeshPhongMaterial({ color: 0x228b22 });
-        const ground = new THREE.Mesh(groundGeo, groundMat);
-        ground.rotation.x = -Math.PI / 2;
-        scene.add(ground);
+      // build wooden rectangular fence around center using posts + rails
+      buildFenceRect(-FENCE_HALF, -FENCE_HALF, FENCE_HALF*2, FENCE_HALF*2);
 
-        const mudGeo = new THREE.CircleGeometry(30, 48);
-        const mudMat = new THREE.MeshPhongMaterial({ color: 0x5c4033, side: THREE.DoubleSide });
-        const mud = new THREE.Mesh(mudGeo, mudMat);
-        mud.rotation.x = -Math.PI / 2;
-        mud.position.y = 0.01;
-        scene.add(mud);
+      // place decorative houses and trees outside fence
+      placeSceneryOutside();
 
-        // 🪵 Fence around mud area
-      createFence(30, 40);
-
-      // 🏠 Houses
-      createHousesOutside(40);
-
-      // 🐷 Pigs
-      for (let i = 0; i < TOTAL_PIGS; i++) {
+      // spawn pigs INSIDE the mud area
+      for(let i=0;i<TOTAL_PIGS;i++){
         const pig = makePig();
-        const a = Math.random() * Math.PI * 2;
-       const r = Math.random() * 18;
-       pig.position.set(Math.cos(a) * r, 0, Math.sin(a) * r);
+        // spawn within mud radius (keep some margin inside)
+        let angle = Math.random() * Math.PI*2;
+        let r = Math.random() * (MUD_RADIUS - 4);
+        pig.position.set(Math.cos(angle)*r, 0, Math.sin(angle)*r);
+        scene.add(pig);
         pigs.push(pig);
-       scene.add(pig);
-       }
-
-       // 🏠 Houses with roof + window + door
-function createHousesOutside(distance) {
-  const wallMat = new THREE.MeshStandardMaterial({ color: 0xffe4b5 });
-  const roofMat = new THREE.MeshStandardMaterial({ color: 0x8b0000 });
-  const doorMat = new THREE.MeshStandardMaterial({ color: 0x5a3e1b });
-  const windowMat = new THREE.MeshStandardMaterial({ color: 0x87cefa });
-
-  const positions = [
-    [distance, 0, distance],
-    [-distance, 0, distance],
-    [distance, 0, -distance],
-    [-distance, 0, -distance]
-  ];
-
-  positions.forEach(([x, y, z]) => {
-    const house = new THREE.Mesh(new THREE.BoxGeometry(6, 4, 6), wallMat);
-    house.position.set(x, 2, z);
-    house.castShadow = true;
-    house.receiveShadow = true;
-    scene.add(house);
-
-    const roof = new THREE.Mesh(new THREE.ConeGeometry(5, 3, 4), roofMat);
-    roof.position.set(x, 6, z);
-    roof.rotation.y = Math.PI / 4;
-    roof.castShadow = true;
-    scene.add(roof);
-
-    // Door
-    const door = new THREE.Mesh(new THREE.BoxGeometry(1.5, 2.5, 0.2), doorMat);
-    door.position.set(x, 1.2, z + 3.1);
-    scene.add(door);
-
-    // Windows
-    const winLeft = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 0.1), windowMat);
-    winLeft.position.set(x - 2, 2.5, z + 3.05);
-    const winRight = winLeft.clone();
-    winRight.position.x = x + 2;
-    scene.add(winLeft);
-    scene.add(winRight);
-  });
-}
-
-// 🪵 Connected Circular Wooden Fence
-function createFence(radius, segments) {
-  const fenceMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.9, metalness: 0.1 });
-  const postGeom = new THREE.CylinderGeometry(0.2, 0.25, 2.5, 12);
-  const railGeom = new THREE.BoxGeometry((2 * Math.PI * radius) / segments, 0.15, 0.25); // Auto size
-
-  for (let i = 0; i < segments; i++) {
-    const angle = (i / segments) * Math.PI * 2;
-    const nextAngle = ((i + 1) / segments) * Math.PI * 2;
-
-    // Fence post
-    const post = new THREE.Mesh(postGeom, fenceMat);
-    post.position.set(Math.cos(angle) * radius, 1.25, Math.sin(angle) * radius);
-    post.castShadow = true;
-    scene.add(post);
-
-    // Top rail (auto-rotated between posts)
-    const midAngle = (angle + nextAngle) / 2;
-    const rail = new THREE.Mesh(railGeom, fenceMat);
-    rail.position.set(Math.cos(midAngle) * radius, 1.4, Math.sin(midAngle) * radius);
-    rail.rotation.y = -midAngle;
-    rail.castShadow = true;
-    scene.add(rail);
-
-    // Bottom rail
-    const lower = rail.clone();
-    lower.position.y = 0.8;
-    scene.add(lower);
-  }
-}
-
-        // spawn pigs
-        for (let i = 0; i < TOTAL_PIGS; i++) {
-          const pig = makePig();
-          const a = Math.random() * Math.PI * 2;
-          const r = Math.random() * 18;
-          pig.position.set(Math.cos(a) * r, 0, Math.sin(a) * r);
-          pigs.push(pig);
-          scene.add(pig);
-        }
-
-        document.getElementById('total').textContent = TOTAL_PIGS;
-        document.getElementById('caught').textContent = caughtCount;
-        document.getElementById('pigsLeft').textContent = pigs.length;
-
-        document.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
-        document.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
-
-        startTime = Date.now();
-        setInterval(updateTimer, 1000);
-        window.addEventListener('resize', onWindowResize, false);
       }
 
-      createFence(30, 32);
-      createHousesOutside(45);
+      // HUD init
+      document.getElementById('total').textContent = TOTAL_PIGS;
+      document.getElementById('caught').textContent = caughtCount;
+      document.getElementById('pigsLeft').textContent = TOTAL_PIGS - caughtCount;
 
-      
-      
-function createFence(radius, segments) {
-  const fenceMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.9, metalness: 0.1 });
-  const postGeom = new THREE.CylinderGeometry(0.2, 0.25, 2.5, 12);
-  const railGeom = new THREE.BoxGeometry((2 * Math.PI * radius) / segments, 0.15, 0.25); // Auto size
+      // controls
+      document.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+      document.addEventListener('keyup',   e => keys[e.key.toLowerCase()] = false);
 
-  for (let i = 0; i < segments; i++) {
-    const angle = (i / segments) * Math.PI * 2;
-    const nextAngle = ((i + 1) / segments) * Math.PI * 2;
+      startTime = Date.now();
+      setInterval(updateTimer, 1000);
+      window.addEventListener('resize', onWindowResize, false);
+    }
 
-    // Fence post
-    const post = new THREE.Mesh(postGeom, fenceMat);
-    post.position.set(Math.cos(angle) * radius, 1.25, Math.sin(angle) * radius);
-    post.castShadow = true;
-    scene.add(post);
+    /** FENCE & COLLISION LOGIC **/
 
-    // Top rail (auto-rotated between posts)
-    const midAngle = (angle + nextAngle) / 2;
-    const rail = new THREE.Mesh(railGeom, fenceMat);
-    rail.position.set(Math.cos(midAngle) * radius, 1.4, Math.sin(midAngle) * radius);
-    rail.rotation.y = -midAngle;
-    rail.castShadow = true;
-    scene.add(rail);
+    // Create rectangular fence with posts and two horizontal rails
+    function buildFenceRect(x, z, width, depth){
+      const postGeo = new THREE.BoxGeometry(0.3, FENCE_HEIGHT, 0.3);
+      const railGeo = new THREE.BoxGeometry(1, 0.12, 0.12); // will scale per segment
+      const postMat = new THREE.MeshPhongMaterial({ color: 0x8b5a2b });
+      const railMat = new THREE.MeshPhongMaterial({ color: 0x6b3e1a });
 
-    // Bottom rail
-    const lower = rail.clone();
-    lower.position.y = 0.8;
-    scene.add(lower);
-  }
-}
-
-
-      function updateTimer() {
-        if (gameEnded || !gameStarted || paused) return;
-        const elapsed = Math.floor((Date.now() - startTime) / 1000);
-        const remaining = GAME_TIME_SEC - elapsed;
-        document.getElementById('timer').textContent = Math.max(0, remaining);
-        if (remaining <= 0 && caughtCount < TOTAL_PIGS) {
-          endGame("⏰ Time's up! Game Over — you didn't catch all pigs.");
-        }
+      // helper to add a rail segment centered at (cx, cz) with length and rotation
+      function addRail(cx, cz, length, rotY){
+        const rail = new THREE.Mesh(railGeo.clone(), railMat);
+        rail.scale.x = length;
+        rail.position.set(cx, FENCE_HEIGHT * 0.55, cz);
+        rail.rotation.y = rotY;
+        scene.add(rail);
       }
 
-      function endGame(msg) {
-        gameEnded = true;
-        document.getElementById("pauseBtn").style.display = "none";
-        const m = document.getElementById('message');
-        m.innerHTML = msg + "<br><br><button class='btn' onclick='restartGame()'>Restart</button>";
-        m.style.display = 'block';
+      // posts along sides
+      // top and bottom (along X)
+      for(let i = x; i <= x + width + 0.0001; i += FENCE_POST_SPACING){
+        const px = i;
+        // bottom side (z)
+        const postB = new THREE.Mesh(postGeo, postMat);
+        postB.position.set(px, FENCE_HEIGHT/2, z);
+        scene.add(postB);
+        // top side
+        const postT = new THREE.Mesh(postGeo, postMat);
+        postT.position.set(px, FENCE_HEIGHT/2, z + depth);
+        scene.add(postT);
+      }
+      // left and right (along Z)
+      for(let j = z; j <= z + depth + 0.0001; j += FENCE_POST_SPACING){
+        const pz = j;
+        const postL = new THREE.Mesh(postGeo, postMat);
+        postL.position.set(x, FENCE_HEIGHT/2, pz);
+        scene.add(postL);
+        const postR = new THREE.Mesh(postGeo, postMat);
+        postR.position.set(x + width, FENCE_HEIGHT/2, pz);
+        scene.add(postR);
       }
 
-      function animate() {
-        if (gameStarted && !gameEnded && !paused) {
-          handleMovement();
-          movePigs();
-          checkCollision();
-        }
-        requestAnimationFrame(animate);
-        if (renderer) renderer.render(scene, camera);
+      // rails: place continuous rails on each side (two rails)
+      // bottom rail
+      addRail(0, z, (width)/1.0, 0);
+      addRail(0, z + depth, (width)/1.0, 0);
+      // left/right rails (rotate 90deg, put at x and x+width)
+      addRail(x, 0, (depth)/1.0, Math.PI/2);
+      addRail(x + width, 0, (depth)/1.0, Math.PI/2);
+
+      // second higher rails:
+      function addSecondRail(cx, cz, length, rotY, yOffset){
+        const rail = new THREE.Mesh(railGeo.clone(), railMat);
+        rail.scale.x = length;
+        rail.position.set(cx, yOffset, cz);
+        rail.rotation.y = rotY;
+        scene.add(rail);
       }
+      addSecondRail(0, z, (width)/1.0, 0, FENCE_HEIGHT*0.8);
+      addSecondRail(0, z + depth, (width)/1.0, 0, FENCE_HEIGHT*0.8);
+      addSecondRail(x, 0, (depth)/1.0, Math.PI/2, FENCE_HEIGHT*0.8);
+      addSecondRail(x + width, 0, (depth)/1.0, Math.PI/2, FENCE_HEIGHT*0.8);
 
-      function randomPigColor() {
-        const colors = [0xffc0cb, 0xffb6c1, 0xf4a460, 0xf5deb3];
-        return colors[Math.floor(Math.random() * colors.length)];
+      // store fence rectangle for collision checks
+      fenceBounds.xMin = x;
+      fenceBounds.xMax = x + width;
+      fenceBounds.zMin = z;
+      fenceBounds.zMax = z + depth;
+    }
+
+    // fence bounds (will be set by buildFenceRect)
+    const fenceBounds = { xMin: -FENCE_HALF, xMax: FENCE_HALF, zMin: -FENCE_HALF, zMax: FENCE_HALF };
+
+    // check if a position is inside fence allowed area (inside rectangle with a small margin)
+    function insideFence(pos, margin = 0){
+      return (pos.x >= fenceBounds.xMin + margin && pos.x <= fenceBounds.xMax - margin &&
+              pos.z >= fenceBounds.zMin + margin && pos.z <= fenceBounds.zMax - margin);
+    }
+
+    /** SCENERY OUTSIDE FENCE (decorative only) **/
+    function placeSceneryOutside(){
+      // place houses outside fence bounds
+      makeHouse(fenceBounds.xMin - 18, fenceBounds.zMin + 6, 0xffe4b5);
+      makeHouse(fenceBounds.xMax + 18, fenceBounds.zMax - 8, 0xffd1dc);
+      makeHouse(fenceBounds.xMin - 22, fenceBounds.zMax + 18, 0xfff7d6);
+
+      // place trees randomly outside (ensure outside fence)
+      for(let i=0;i<10;i++){
+        let x,z;
+        do {
+          x = (Math.random() - 0.5) * 160;
+          z = (Math.random() - 0.5) * 160;
+        } while(Math.hypot(x, z) < (MUD_RADIUS + 8) || (x >= fenceBounds.xMin && x <= fenceBounds.xMax && z >= fenceBounds.zMin && z <= fenceBounds.zMax));
+        makeTree(x,z);
       }
+    }
 
-      function makePig() {
-        const pig = new THREE.Group();
-        const skinColor = randomPigColor();
+    function makeHouse(x,z, color=0xffe4b5){
+      const g = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.BoxGeometry(6,4,5), new THREE.MeshPhongMaterial({ color }));
+      body.position.y = 2;
+      const roof = new THREE.Mesh(new THREE.ConeGeometry(4,2.5,4), new THREE.MeshPhongMaterial({ color: 0x8b0000 }));
+      roof.rotation.y = Math.PI/4; roof.position.y = 5;
+      const door = new THREE.Mesh(new THREE.BoxGeometry(1.2,2,0.1), new THREE.MeshPhongMaterial({ color: 0x3e2723 }));
+      door.position.set(0,1,2.55);
+      g.add(body, roof, door);
+      g.position.set(x,0,z);
+      scene.add(g);
+    }
 
-        const bodyGeo = new THREE.SphereGeometry(1, 16, 16);
-        const bodyMat = new THREE.MeshPhongMaterial({ color: skinColor });
-        const body = new THREE.Mesh(bodyGeo, bodyMat);
-        body.position.y = 1.2;
-        pig.add(body);
+    function makeTree(x,z){
+      const g = new THREE.Group();
+      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.4,2,8), new THREE.MeshPhongMaterial({ color: 0x8b4513 }));
+      trunk.position.y = 1;
+      const leaves = new THREE.Mesh(new THREE.SphereGeometry(1.6,12,12), new THREE.MeshPhongMaterial({ color: 0x2e8b57 }));
+      leaves.position.y = 3;
+      g.add(trunk, leaves);
+      g.position.set(x,0,z);
+      scene.add(g);
+    }
 
-        const snoutGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.4, 16);
-        const snoutMat = new THREE.MeshPhongMaterial({ color: (skinColor - 0x222222) });
-        const snout = new THREE.Mesh(snoutGeo, snoutMat);
-        snout.rotation.x = Math.PI / 2;
-        snout.position.set(0, 1.2, 1);
-        pig.add(snout);
+    /** PIGS & PLAYER LOGIC **/
 
-        const eyeGeo = new THREE.SphereGeometry(0.1, 8, 8);
-        const eyeMat = new THREE.MeshPhongMaterial({ color: 0x000000 });
-        const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
-        leftEye.position.set(-0.3, 1.5, 0.9);
-        pig.add(leftEye);
-        const rightEye = leftEye.clone();
-        rightEye.position.x = 0.3;
-        pig.add(rightEye);
+    function randomPigColor(){ const colors=[0xffc0cb,0xffb6c1,0xf4a460,0xf5deb3]; return colors[Math.floor(Math.random()*colors.length)]; }
 
-        const earGeo = new THREE.ConeGeometry(0.2, 0.4, 8);
-        const earMat = new THREE.MeshPhongMaterial({ color: skinColor });
-        const leftEar = new THREE.Mesh(earGeo, earMat);
-        leftEar.position.set(-0.4, 2, 0.2);
-        pig.add(leftEar);
-        const rightEar = leftEar.clone();
-        rightEar.position.x = 0.4;
-        pig.add(rightEar);
+    function makePig(){
+      const pig = new THREE.Group();
+      const skin = randomPigColor();
+      const body = new THREE.Mesh(new THREE.SphereGeometry(1,16,16), new THREE.MeshPhongMaterial({ color: skin }));
+      body.position.y = 1.2;
+      const snout = new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.3,0.4,16), new THREE.MeshPhongMaterial({ color: (skin - 0x222222) }));
+      snout.rotation.x = Math.PI/2; snout.position.set(0,1.2,1);
+      const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.1,8,8), new THREE.MeshPhongMaterial({ color:0x000000 })); leftEye.position.set(-0.3,1.5,0.9);
+      const rightEye = leftEye.clone(); rightEye.position.x = 0.3;
+      const earGeo = new THREE.ConeGeometry(0.2,0.4,8);
+      const leftEar = new THREE.Mesh(earGeo, new THREE.MeshPhongMaterial({ color: skin })); leftEar.position.set(-0.4,2,0.2);
+      const rightEar = leftEar.clone(); rightEar.position.x = 0.4;
+      const footGeo = new THREE.CylinderGeometry(0.15,0.15,0.4,8);
+      const footMat = new THREE.MeshPhongMaterial({ color: 0x8b4513 });
+      const feet = [];
+      [[-0.5,0.2,-0.5],[0.5,0.2,-0.5],[-0.5,0.2,0.5],[0.5,0.2,0.5]].forEach(([x,y,z])=>{
+        const f = new THREE.Mesh(footGeo, footMat); f.position.set(x,y,z); feet.push(f);
+      });
+      const tail = new THREE.Mesh(new THREE.TorusGeometry(0.2,0.05,8,16,Math.PI*1.5), new THREE.MeshPhongMaterial({ color: skin }));
+      tail.position.set(0,1.3,-1); tail.rotation.y = Math.PI/2;
+      pig.add(body, snout, leftEye, rightEye, leftEar, rightEar, tail, ...feet);
+      pig.userData = {
+        dir: new THREE.Vector3(Math.random()-0.5,0,Math.random()-0.5).normalize(),
+        baseSpeed: 0.20,
+        isCaught: false,
+        feet, body,
+        animPhase: Math.random()*Math.PI*2
+      };
+      pig.position.y = 0;
+      return pig;
+    }
 
-        const footGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.4, 8);
-        const footMat = new THREE.MeshPhongMaterial({ color: 0x8b4513 });
-        const footOffsets = [
-          [-0.5, 0.2, -0.5],
-          [0.5, 0.2, -0.5],
-          [-0.5, 0.2, 0.5],
-          [0.5, 0.2, 0.5]
-        ];
-        let feet = [];
-        for (let [x, y, z] of footOffsets) {
-          const foot = new THREE.Mesh(footGeo, footMat);
-          foot.position.set(x, y, z);
-          pig.add(foot);
-          feet.push(foot);
-        }
-
-        const tailGeo = new THREE.TorusGeometry(0.2, 0.05, 8, 16, Math.PI * 1.5);
-        const tailMat = new THREE.MeshPhongMaterial({ color: skinColor });
-        const tail = new THREE.Mesh(tailGeo, tailMat);
-        tail.position.set(0, 1.3, -1);
-        tail.rotation.y = Math.PI / 2;
-        pig.add(tail);
-
-        pig.userData = {
-          dir: new THREE.Vector3(Math.random() - 0.5, 0, Math.random() - 0.5).normalize(),
-          baseSpeed: 0.02,
-          isCaught: false,
-          feet: feet,
-          body: body,
-          animPhase: Math.random() * Math.PI * 2
-        };
-
-        return pig;
-      }
-
-     
-
-      function collidesWithObstacle(pos, radius = 1) {
-        for (let obs of obstacles) {
-          const dx = pos.x - obs.x;
-          const dz = pos.z - obs.z;
-          const dist = Math.sqrt(dx * dx + dz * dz);
-          if (dist < obs.radius + radius) return true;
-        }
-        return false;
-      }
-
-      function updateTimer() {
-        if (gameEnded) return;
-        const elapsed = Math.floor((Date.now() - startTime) / 1000);
-        const remaining = GAME_TIME_SEC - elapsed;
-        document.getElementById('timer').textContent = Math.max(0, remaining);
-        if (remaining <= 0 && caughtCount < TOTAL_PIGS) {
-          endGame("⏰ Time's up! Game Over — you didn't catch all pigs.");
-        }
-      }
-
-      function endGame(msg) {
-        gameEnded = true;
-        const m = document.getElementById('message');
-        m.innerHTML = msg + "<br><br><button class='btn' onclick='restartGame()'>Restart</button>";
-        m.style.display = 'block';
-      }
-
-      function animate() {
-        if (gameStarted && !gameEnded) {
-          handleMovement();
-          movePigs();
-          checkCollision();
-        }
-        requestAnimationFrame(animate);
-        if (renderer) renderer.render(scene, camera);
-      }
-
-       function handleMovement() {
+    // Player movement with fence collision: we compute proposed newPos and if it would be outside fence (beyond inner margin), we clamp it to fence boundary.
+    function handleMovement(){
       const forward = new THREE.Vector3();
       camera.getWorldDirection(forward);
 
       let newPos = camera.position.clone();
       if (keys['w']) newPos.addScaledVector(forward, playerSpeed);
       if (keys['s']) newPos.addScaledVector(forward, -playerSpeed);
-      if (keys['a']) {
+      if (keys['a']){
         newPos.x -= Math.sin(camera.rotation.y) * playerSpeed;
         newPos.z += Math.cos(camera.rotation.y) * playerSpeed;
       }
-      if (keys['d']) {
+      if (keys['d']){
         newPos.x += Math.sin(camera.rotation.y) * playerSpeed;
         newPos.z -= Math.cos(camera.rotation.y) * playerSpeed;
       }
 
-      // 🚫 Prevent leaving fenced area
-      const fenceRadius = 29; // slightly inside actual fence (30)
-      const distFromCenter = Math.hypot(newPos.x, newPos.z);
-      if (distFromCenter > fenceRadius) {
-        const angle = Math.atan2(newPos.z, newPos.x);
-        newPos.x = Math.cos(angle) * fenceRadius;
-        newPos.z = Math.sin(angle) * fenceRadius;
-      }
+      // fence margin: keep player from getting too close to rails
+      const margin = 0.9; // player can't cross fenceBounds +/- margin
+      if (newPos.x < fenceBounds.xMin + margin) newPos.x = Math.max(newPos.x, fenceBounds.xMin + margin);
+      if (newPos.x > fenceBounds.xMax - margin) newPos.x = Math.min(newPos.x, fenceBounds.xMax - margin);
+      if (newPos.z < fenceBounds.zMin + margin) newPos.z = Math.max(newPos.z, fenceBounds.zMin + margin);
+      if (newPos.z > fenceBounds.zMax - margin) newPos.z = Math.min(newPos.z, fenceBounds.zMax - margin);
 
       camera.position.copy(newPos);
 
@@ -562,93 +338,101 @@ function createFence(radius, segments) {
       if (keys['arrowright']) camera.rotation.y -= 0.03;
     }
 
-      // 🚫 Prevent leaving fenced area
-      const fenceRadius = 29; // slightly inside actual fence (30)
-      const distFromCenter = Math.hypot(newPos.x, newPos.z);
-      if (distFromCenter > fenceRadius) {
-        const angle = Math.atan2(newPos.z, newPos.x);
-        newPos.x = Math.cos(angle) * fenceRadius;
-        newPos.z = Math.sin(angle) * fenceRadius;
-      }
-
-      camera.position.copy(newPos);
-
-        if (keys['arrowleft']) camera.rotation.y += 0.03;
-        if (keys['arrowright']) camera.rotation.y -= 0.03;
-
-      
-
-      function movePigs() {
-        pigs.forEach(pig => {
-          if (pig.userData.isCaught) return;
-          const pos = pig.position;
-          const distToPlayer = camera.position.distanceTo(pos);
-          let moveDir, speed;
-          if (distToPlayer < 8) {
-            moveDir = pos.clone().sub(camera.position).normalize();
-            speed = 0.06 + (8 - distToPlayer) * 0.02;
-          } else {
-            moveDir = pig.userData.dir.clone();
-            speed = pig.userData.baseSpeed;
-            if (Math.random() < 0.01) {
-              pig.userData.dir = new THREE.Vector3(Math.random() - 0.5, 0, Math.random() - 0.5).normalize();
-            }
-          }
-          let newPos = pos.clone().addScaledVector(moveDir, speed);
-          if (!collidesWithObstacle(newPos, 1)) pig.position.copy(newPos);
-          const r = Math.hypot(pig.position.x, pig.position.z);
-          if (r > 29) {
-            const toCenter = new THREE.Vector3(-pig.position.x, 0, -pig.position.z).normalize();
-            pig.position.addScaledVector(toCenter, 0.25);
-          }
-          pig.position.y = 0;
-
-          // Feet animation
-          pig.userData.animPhase += speed * 5;
-          pig.userData.feet.forEach((foot, i) => {
-            foot.position.y = 0.2 + Math.sin(pig.userData.animPhase + i) * 0.1;
-          });
-
-          // Body bob
-          pig.userData.body.position.y = 1.2 + Math.sin(pig.userData.animPhase * 2) * 0.05;
-        });
-      }
-
-      function checkCollision() {
-        for (let i = pigs.length - 1; i >= 0; i--) {
-          const pig = pigs[i];
-          if (pig.userData.isCaught) continue;
-
-          const dx = camera.position.x - pig.position.x;
-          const dz = camera.position.z - pig.position.z;
-          const horizDist = Math.hypot(dx, dz);
-
-          const bodyWorldY = pig.position.y + (pig.userData.body ? pig.userData.body.position.y : 1.2);
-          const vertDist = Math.abs(camera.position.y - bodyWorldY);
-
-          if (horizDist < 2.0 && vertDist < 2.0) {
-            pig.userData.isCaught = true;
-            scene.remove(pig);
-            pigs.splice(i, 1);
-            caughtCount++;
-            document.getElementById('caught').textContent = caughtCount;
-            document.getElementById('pigsLeft').textContent = pigs.length;
-
-            if (caughtCount >= TOTAL_PIGS) {
-              endGame("🎉 You caught all pigs! You win!");
-            }
-          }
+    // Move pigs, keep them inside fence. If they try to go beyond, bounce/turn them back.
+    function movePigs(){
+      pigs.forEach(pig => {
+        if (pig.userData.isCaught) return;
+        const pos = pig.position;
+        const distToPlayer = camera.position.distanceTo(pos);
+        let moveDir, speed;
+        if (distToPlayer < 8) {
+          moveDir = pos.clone().sub(camera.position).normalize();
+          speed = 0.06 + (8 - distToPlayer) * 0.02;
+        } else {
+          moveDir = pig.userData.dir.clone();
+          speed = pig.userData.baseSpeed;
+          if (Math.random() < 0.01) pig.userData.dir = new THREE.Vector3(Math.random()-0.5,0,Math.random()-0.5).normalize();
         }
+
+        const newPos = pos.clone().addScaledVector(moveDir, speed);
+
+        // if newPos would be outside fence bounds, reflect direction or nudge toward interior
+        const inside = (newPos.x >= fenceBounds.xMin + 0.6 && newPos.x <= fenceBounds.xMax - 0.6 &&
+                        newPos.z >= fenceBounds.zMin + 0.6 && newPos.z <= fenceBounds.zMax - 0.6);
+        if (!inside) {
+          // simple bounce: invert direction component that would cross boundary
+          if (newPos.x < fenceBounds.xMin + 0.6 || newPos.x > fenceBounds.xMax - 0.6) pig.userData.dir.x *= -1;
+          if (newPos.z < fenceBounds.zMin + 0.6 || newPos.z > fenceBounds.zMax - 0.6) pig.userData.dir.z *= -1;
+          // nudge slightly inward to avoid sticking
+          pig.position.addScaledVector(pig.userData.dir, speed * 0.5);
+        } else {
+          pig.position.copy(newPos);
+        }
+
+        // keep pigs on ground
+        pig.position.y = 0;
+
+        // simple leg/body bob animation
+        pig.userData.animPhase += speed * 5;
+        pig.userData.feet.forEach((foot,i)=> foot.position.y = 0.2 + Math.sin(pig.userData.animPhase + i) * 0.08);
+        pig.userData.body.position.y = 1.2 + Math.sin(pig.userData.animPhase*2) * 0.04;
+      });
+    }
+
+    // collision detection: check if player is near pig to catch
+    function checkCollision(){
+      pigs.forEach((pig, idx) => {
+        if (pig.userData.isCaught) return;
+        const horiz = Math.hypot(camera.position.x - pig.position.x, camera.position.z - pig.position.z);
+        const bodyWorldY = pig.position.y + (pig.userData.body ? pig.userData.body.position.y : 1.2);
+        const vert = Math.abs(camera.position.y - bodyWorldY);
+        if (horiz < 2.0 && vert < 2.0) {
+          pig.userData.isCaught = true;
+          scene.remove(pig);
+          caughtCount++;
+          document.getElementById('caught').textContent = caughtCount;
+          document.getElementById('pigsLeft').textContent = Math.max(0, TOTAL_PIGS - caughtCount);
+          if (caughtCount >= TOTAL_PIGS) endGame(true);
+        }
+      });
+    }
+
+    // timer / endgame
+    function updateTimer(){
+      if (!gameStarted || gameEnded) return;
+      const elapsed = Math.floor((Date.now() - startTime)/1000);
+      const remaining = Math.max(GAME_TIME_SEC - elapsed, 0);
+      document.getElementById('timer').textContent = remaining;
+      if (remaining <= 0 && caughtCount < TOTAL_PIGS) endGame(false);
+    }
+
+    function endGame(won){
+      gameEnded = true;
+      document.getElementById('message').style.display = 'block';
+      document.getElementById('message').innerHTML = won
+        ? `🎉 You caught all pigs! You win!<br><br><button class="btn" onclick="restartGame()">Restart</button>`
+        : `⏰ Time's up! Game Over — try again!<br><br><button class="btn" onclick="restartGame()">Restart</button>`;
+    }
+
+    // viewport
+    function onWindowResize(){
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate(){
+      requestAnimationFrame(animate);
+      if (gameStarted && !gameEnded) {
+        handleMovement();
+        movePigs();
+        checkCollision();
       }
+      if (renderer) renderer.render(scene, camera);
+    }
 
-      function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      }
-      
-    </script>
-  </body>
-  </html>
-
-
+    // slightly move camera up to keep viewpoint comfortable
+    // initial instructions: show menu until startGame
+  </script>
+</body>
+</html>
