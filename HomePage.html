@@ -1,28 +1,36 @@
+Try AI directly in your favorite apps … Use Gemini to generate drafts and refine content, plus get Gemini Pro with access to Google's next-gen AI for ₱1,100 ₱0 for 1 month
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Filipino Carnival Games</title>
+  <title>🎪 Filipino Fiesta Game Hub</title>
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, #ffe5e5, #fff9c4, #e8f5e9);
+      font-family: 'Trebuchet MS', sans-serif;
+      background: linear-gradient(180deg, #ffebee, #fff9c4, #e8f5e9);
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: space-between;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     header {
       text-align: center;
       padding: 40px 20px 20px;
       color: #d32f2f;
+      position: relative;
+      z-index: 2;
     }
 
     header h1 {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       margin: 0;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+      letter-spacing: 2px;
+      animation: popIn 1.2s ease;
     }
 
     header p {
@@ -32,66 +40,112 @@
       margin: 10px auto 0;
     }
 
-    .games-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-      padding: 30px;
+    @keyframes popIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Fiesta flags */
+    .banner {
+      display: flex;
+      justify-content: space-around;
       width: 100%;
-      max-width: 1000px;
+      margin-bottom: 15px;
+      background: transparent;
+    }
+
+    .flag {
+      width: 0; height: 0;
+      border-left: 25px solid transparent;
+      border-right: 25px solid transparent;
+      border-bottom: 35px solid;
+      animation: wave 1s infinite ease-in-out;
+    }
+    .flag:nth-child(1) { border-bottom-color: #ff0000; animation-delay: 0s; }
+    .flag:nth-child(2) { border-bottom-color: #ffea00; animation-delay: 0.2s; }
+    .flag:nth-child(3) { border-bottom-color: #00bcd4; animation-delay: 0.4s; }
+    .flag:nth-child(4) { border-bottom-color: #4caf50; animation-delay: 0.6s; }
+    .flag:nth-child(5) { border-bottom-color: #ff9800; animation-delay: 0.8s; }
+    .flag:nth-child(6) { border-bottom-color: #e91e63; animation-delay: 1s; }
+
+    @keyframes wave {
+      0%, 100% { transform: rotate(5deg); }
+      50% { transform: rotate(-5deg); }
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 2;
     }
 
     .game-card {
       background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+      padding: 25px;
       text-align: center;
-      transition: transform 0.3s;
+      max-width: 400px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 5px solid #fbc02d;
+      position: relative;
     }
 
     .game-card:hover {
       transform: scale(1.05);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
 
     .game-icon {
-      font-size: 40px;
+      font-size: 60px;
       margin-bottom: 15px;
+      animation: bounce 1.5s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
     .game-card h2 {
-      margin: 10px 0;
       color: #b71c1c;
+      margin: 10px 0;
+      font-size: 1.8rem;
     }
 
     .game-card p {
-      font-size: 0.95rem;
+      font-size: 1rem;
       color: #555;
-      min-height: 50px;
+      margin-bottom: 15px;
     }
 
     .play-btn {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
-      background: #d32f2f;
-      color: #fff;
+      background: linear-gradient(45deg, #f44336, #ff9800);
+      color: white;
       border: none;
       border-radius: 25px;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      transition: 0.3s;
     }
 
     .play-btn:hover {
-      background: #b71c1c;
+      transform: scale(1.05);
+      background: linear-gradient(45deg, #ffeb3b, #ff7043);
+      color: #333;
     }
 
-    /* Survey button style */
     .survey-btn {
-      display: inline-block;
-      margin: 30px auto;
+      margin-top: 30px;
       padding: 12px 30px;
-      background: linear-gradient(45deg, #fbc02d, #d32f2f, #0288d1);
+      background: linear-gradient(45deg, #03a9f4, #8bc34a, #fbc02d);
       color: #fff;
       border: none;
       border-radius: 30px;
@@ -100,25 +154,25 @@
       cursor: pointer;
       transition: transform 0.3s, box-shadow 0.3s;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
     .survey-btn:hover {
-      transform: scale(1.08);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      transform: scale(1.1);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.4);
     }
 
     footer {
+      width: 100%;
       text-align: center;
       padding: 15px;
-      margin-top: auto;
-      font-size: 0.9rem;
-      color: #fff;
       background: linear-gradient(45deg, #d32f2f, #fbc02d, #0288d1);
       background-size: 300% 300%;
       animation: carnivalFlow 6s ease infinite;
-      width: 100%;
+      color: #fff;
       font-weight: bold;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+      font-size: 0.9rem;
     }
 
     @keyframes carnivalFlow {
@@ -126,58 +180,149 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
+    #confetti {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Music Button */
+    #music-control {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #ff7043;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      font-size: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: transform 0.3s;
+      z-index: 10;
+    }
+
+    #music-control:hover {
+      transform: scale(1.1);
+      background: #ffcc80;
+      color: #333;
+    }
   </style>
 </head>
 <body>
 
+  <!-- Confetti Canvas -->
+  <canvas id="confetti"></canvas>
+
+  <!-- Music Control -->
+  <button id="music-control">🔈</button>
+  <audio id="bg-music" loop autoplay>
+    <source src="flamenco_standoff.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="banner">
+    <div class="flag"></div><div class="flag"></div><div class="flag"></div>
+    <div class="flag"></div><div class="flag"></div><div class="flag"></div>
+  </div>
+
   <header>
-    <h1> Filipino Carnival Games </h1>
-    <p>Experience the joy of traditional Filipino fiesta games! Choose a challenge and have fun.</p>
+    <h1>🎪 Filipino Fiesta Games</h1>
+    <p>Welcome to our fun-filled carnival! Experience the joy of chasing pigs like a true fiesta champion 🐷💨</p>
   </header>
 
-  <main class="games-container">
-    <div class="game-card">
-      <div class="game-icon">⭐</div>
-      <h2>Shooting Cans</h2>
-      <p>Knock down all the cans and show off your aim!</p>
-      <button class="play-btn" onclick="playGame('Shooting Cans')">Play Now</button>
-    </div>
-
+  <main>
     <div class="game-card">
       <div class="game-icon">🐷</div>
       <h2>Habuling Baboy</h2>
-      <p>Catch the pig before it slips away—just like at a real fiesta!</p>
-      <button class="play-btn" onclick="playGame('Habuling Baboy')">Play Now</button>
+      <p>Catch the pig before it escapes — a hilarious and lively Filipino fiesta tradition!</p>
+      <button class="play-btn" onclick="playGame()">🎮 Play Now</button>
     </div>
 
-    <div class="game-card">
-      <div class="game-icon">🏀</div>
-      <h2>Hoops</h2>
-      <p>Shoot the ball into the hoop and rack up the highest score!</p>
-      <button class="play-btn" onclick="playGame('Hoops')">Play Now</button>
-    </div>
+    <button class="survey-btn" onclick="goToSurvey()">📋 Take Our Survey</button>
   </main>
 
-  <!-- Survey Button -->
-  <button class="survey-btn" onclick="goToSurvey()">📋 Take Our Survey</button>
-
   <footer>
-    &copy; 2025 CCEBB Developers. All Rights Reserved.
+    © 2025 CCEBB Developers | Allright Reserved 🐷
   </footer>
 
   <script>
-    function playGame(gameName) {
-      alert("You selected: " + gameName);
-      let fileName = gameName.toLowerCase().replace(/ /g, "_") + ".html";
-      window.location.href = fileName;  
+    function playGame() {
+      window.location.href = "habuling_baboy.html";
     }
 
     function goToSurvey() {
       window.location.href = "survey.html";
     }
-  </script>
 
+    // Background Music Control
+    const music = document.getElementById("bg-music");
+    const musicBtn = document.getElementById("music-control");
+    let playing = true;
+
+    // Play automatically when loaded
+    window.addEventListener("load", () => {
+      music.volume = 0.5; // medium volume
+      music.play().catch(() => {
+        console.log("Autoplay blocked, waiting for user interaction.");
+      });
+    });
+
+    // Button toggle
+    musicBtn.addEventListener("click", () => {
+      if (playing) {
+        music.pause();
+        playing = false;
+        musicBtn.textContent = "🔇";
+      } else {
+        music.play();
+        playing = true;
+        musicBtn.textContent = "🔈";
+      }
+    });
+
+    // Confetti Animation
+    const confetti = document.getElementById("confetti");
+    const ctx = confetti.getContext("2d");
+    let pieces = Array.from({length: 70}, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 6 + 3,
+      d: Math.random() * 80,
+      color: `hsl(${Math.random() * 360}, 100%, 60%)`
+    }));
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, confetti.width, confetti.height);
+      pieces.forEach(p => {
+        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      updateConfetti();
+      requestAnimationFrame(drawConfetti);
+    }
+
+    function updateConfetti() {
+      pieces.forEach(p => {
+        p.y += Math.cos(p.d) + 1 + p.r / 2;
+        p.x += Math.sin(p.d);
+        if (p.y > confetti.height) {
+          p.y = 0;
+          p.x = Math.random() * confetti.width;
+        }
+      });
+    }
+
+    confetti.width = window.innerWidth;
+    confetti.height = window.innerHeight;
+    drawConfetti();
+  </script>
 </body>
 </html>
-
-
